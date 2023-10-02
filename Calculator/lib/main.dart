@@ -40,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             width: double.infinity,
@@ -54,31 +53,74 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          const SizedBox(height: 20.0,),
-          const Column(
-            // mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              alignment: Alignment.center,
+              color: Colors.brown[300],
+              child: Column(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Operator(op: '+',),
-                  Operator(op: '-'),
+                  const Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Operator(op: '7'),
+                        SizedBox(width: 10,),
+                        Operator(op: '8'),
+                        SizedBox(width: 10,),
+                        Operator(op: '9'),
+                        SizedBox(width: 10,),
+                        Operator(op: '+',),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  const Expanded(
+                    child: Row(
+                      children: [
+                        Operator(op: '4'),
+                        SizedBox(width: 10,),
+                        Operator(op: '5'),
+                        SizedBox(width: 10,),
+                        Operator(op: '6'),
+                        SizedBox(width: 10,),
+                        Operator(op: '-'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  const Expanded(
+                    child: Row(
+                      children: [
+                        Operator(op: '1'),
+                        SizedBox(width: 10,),
+                        Operator(op: '2'),
+                        SizedBox(width: 10,),
+                        Operator(op: '3'),
+                        SizedBox(width: 10,),
+                        Operator(op: '×'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Operator(op: 'C', textColor: Colors.red[400],),
+                        const SizedBox(width: 10,),
+                        const Operator(op: '0'),
+                        const SizedBox(width: 10,),
+                        const Operator(op: '.'),
+                        const SizedBox(width: 10,),
+                        const Operator(op: '÷'),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-              SizedBox(height: 20,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Operator(op: '×'),
-                  Operator(op: '÷'),
-                ],
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 20,),
           Container(
             width: double.infinity,
             alignment: Alignment.center,
@@ -99,7 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Operator extends StatefulWidget {
   final String op;
-  const Operator({super.key, required this.op, });
+  final Color? textColor;
+  const Operator({super.key, required this.op, this.textColor = Colors.black45});
 
   @override
   State<Operator> createState() => _OperatorState();
@@ -108,17 +151,22 @@ class Operator extends StatefulWidget {
 class _OperatorState extends State<Operator> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100.0,
-      width: 150.0,
-      // color: Colors.brown,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.brown),
-      child: Text(
-        widget.op,
-        style: const TextStyle(
-          fontSize: 50,
-          color: Colors.black45,
+    return Expanded(
+      child: GestureDetector(
+        onTap: (){
+          print('result');
+        },
+        child: Container(
+          // height: 100.0,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.brown),
+          child: Text(
+            widget.op,
+            style: TextStyle(
+              fontSize: 50,
+              color: widget.textColor,
+            ),
+          ),
         ),
       ),
     );

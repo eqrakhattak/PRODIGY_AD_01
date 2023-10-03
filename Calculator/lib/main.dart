@@ -32,37 +32,38 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   double result = 0;
-  double input = 0;
-  double num1 = 0;
-  double num2 = 0;
-
-  void add(){
-    num1 + num2;
-  }
-
-  void subtract(){
-    num1 - num2;
-  }
-
-  void multiply(){
-    num1 * num2;
-  }
-
-  void divide(){
-    num1 / num2;
-  }
+  String input = '';
+  double? num1;
+  double? num2;
+  String? operator;
 
   void display(dynamic value) {
-    if(double.tryParse(value) != null) {
+    if (double.tryParse(value) != null) {  // If it's a numeric value
+      if (operator == null) {  // If there's no operator set, update num1
+        setState(() {
+          num1 = double.parse(value);
+          input = '$num1';
+        });
+      } else if (num2 == null) {  // If an operator is set but no num2, update num2
+        setState(() {
+          num2 = double.parse(value);
+          input = '$num1 $operator $num2';
+        });
+      }
+    } else if (value == '+' || value == '-' || value == '×' || value == '÷') {  // If it's an operator
       setState(() {
-        input = double.parse(value);
+        operator = value;
+        input = '$num1 $operator';
       });
-      print('its numeric');
+    } else if(value == 'C') {
+      setState(() {
+        input = '';
+        result = 0;
+        num1 = 0;
+        num2 = 0;
+        operator = null;
+      });
     }
-    // }else if(value is char){
-    //
-    // }
-
     print("Pressed: $value");
   }
 
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.amberAccent,
             alignment: Alignment.bottomRight,
             child: Text(
-              '$input',
+              input,
               style: const TextStyle(
                 fontSize: 40,
                 color: Colors.black54,
@@ -168,15 +169,36 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          Container(
-            width: double.infinity,
-            alignment: Alignment.center,
-            color: Colors.deepOrangeAccent,
-            child: const Text(
-              '=',
-              style: TextStyle(
-                color: Colors.black45,
-                fontSize: 50,
+          GestureDetector(
+            onTap: (){
+              if(operator == '+'){
+                setState(() {
+                  result = num1! + num2!;
+                });
+              } else if(operator == '-'){
+                setState(() {
+                  result = num1! - num2!;
+                });
+              } else if(operator == '×'){
+                setState(() {
+                  result = num1! * num2!;
+                });
+              } else if(operator == '÷'){
+                setState(() {
+                  result = num1! / num2!;
+                });
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              color: Colors.deepOrangeAccent,
+              child: const Text(
+                '=',
+                style: TextStyle(
+                  color: Colors.black45,
+                  fontSize: 50,
+                ),
               ),
             ),
           ),

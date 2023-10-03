@@ -9,13 +9,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Calculator',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Calculator'),
+      // theme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      //   useMaterial3: true,
+      // ),
+      home: MyHomePage(title: 'Calculator'),
     );
   }
 }
@@ -32,18 +32,65 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   double result = 0;
+  double input = 0;
+  double num1 = 0;
+  double num2 = 0;
+
+  void add(){
+    num1 + num2;
+  }
+
+  void subtract(){
+    num1 - num2;
+  }
+
+  void multiply(){
+    num1 * num2;
+  }
+
+  void divide(){
+    num1 / num2;
+  }
+
+  void display(dynamic value) {
+    if(double.tryParse(value) != null) {
+      setState(() {
+        input = double.parse(value);
+      });
+      print('its numeric');
+    }
+    // }else if(value is char){
+    //
+    // }
+
+    print("Pressed: $value");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Colors.lightGreen[900],
       ),
       body: Column(
         children: [
           Container(
             width: double.infinity,
-            height: 200.0,
+            height: 100.0,
+            color: Colors.amberAccent,
+            alignment: Alignment.bottomRight,
+            child: Text(
+              '$input',
+              style: const TextStyle(
+                fontSize: 40,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            height: 100.0,
             color: Colors.amberAccent,
             alignment: Alignment.bottomRight,
             child: Text(
@@ -61,45 +108,17 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Operator(op: '7'),
-                        SizedBox(width: 10,),
-                        Operator(op: '8'),
-                        SizedBox(width: 10,),
-                        Operator(op: '9'),
-                        SizedBox(width: 10,),
-                        Operator(op: '+',),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  const Expanded(
-                    child: Row(
-                      children: [
-                        Operator(op: '4'),
-                        SizedBox(width: 10,),
-                        Operator(op: '5'),
-                        SizedBox(width: 10,),
-                        Operator(op: '6'),
-                        SizedBox(width: 10,),
-                        Operator(op: '-'),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  const Expanded(
-                    child: Row(
-                      children: [
-                        Operator(op: '1'),
-                        SizedBox(width: 10,),
-                        Operator(op: '2'),
-                        SizedBox(width: 10,),
-                        Operator(op: '3'),
-                        SizedBox(width: 10,),
-                        Operator(op: '×'),
+                        OperatorWidget(op: '7', operation: (value) {display(value);},), // Pass 'value' as a parameter to your function
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '8', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '9', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '+', operation: (value) {display(value);},),
                       ],
                     ),
                   ),
@@ -107,13 +126,41 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     child: Row(
                       children: [
-                        Operator(op: 'C', textColor: Colors.red[400],),
+                        OperatorWidget(op: '4', operation: (value) {display(value);},),
                         const SizedBox(width: 10,),
-                        const Operator(op: '0'),
+                        OperatorWidget(op: '5', operation: (value) {display(value);},),
                         const SizedBox(width: 10,),
-                        const Operator(op: '.'),
+                        OperatorWidget(op: '6', operation: (value) {display(value);},),
                         const SizedBox(width: 10,),
-                        const Operator(op: '÷'),
+                        OperatorWidget(op: '-', operation: (value) {display(value);},),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        OperatorWidget(op: '1', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '2', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '3', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '×', operation: (value) {display(value);},),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        OperatorWidget(op: 'C', textColor: Colors.red[400], operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '0', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '.', operation: (value) {display(value);},),
+                        const SizedBox(width: 10,),
+                        OperatorWidget(op: '÷', operation: (value) {display(value);},),
                       ],
                     ),
                   ),
@@ -139,25 +186,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class Operator extends StatefulWidget {
+class OperatorWidget extends StatefulWidget {
   final String op;
   final Color? textColor;
-  const Operator({super.key, required this.op, this.textColor = Colors.black45});
+  final Function(dynamic)? operation;
+  const OperatorWidget({super.key, required this.op, this.textColor = Colors.black45, required this.operation});
 
   @override
-  State<Operator> createState() => _OperatorState();
+  State<OperatorWidget> createState() => _OperatorWidgetState();
 }
 
-class _OperatorState extends State<Operator> {
+class _OperatorWidgetState extends State<OperatorWidget> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: (){
-          print('result');
+        onTap: () {
+          if (widget.operation != null) {
+            widget.operation!(widget.op); // Pass 'widget.op' as a parameter
+          }
         },
         child: Container(
-          // height: 100.0,
           alignment: Alignment.center,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.brown),
           child: Text(

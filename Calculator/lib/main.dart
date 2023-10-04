@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,10 +12,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Flutter Calculator',
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      //   useMaterial3: true,
-      // ),
       home: MyHomePage(title: 'Calculator'),
     );
   }
@@ -36,35 +33,93 @@ class _MyHomePageState extends State<MyHomePage> {
   double? num1;
   double? num2;
   String? operator;
+  bool editingNum1 = true;
 
   void display(dynamic value) {
-    if (double.tryParse(value) != null) {  // If it's a numeric value
-      if (operator == null) {  // If there's no operator set, update num1
+    if (value == '.') {   // Handle the decimal point
+      if (editingNum1 && !input.contains('.') && num1 != null) {
         setState(() {
-          num1 = double.parse(value);
-          input = '$num1';
+          input += '.';
         });
-      } else if (num2 == null) {  // If an operator is set but no num2, update num2
+      } else if (!editingNum1 && num2 != null) {
         setState(() {
-          num2 = double.parse(value);
-          input = '$num1 $operator $num2';
+          input += '.';
+        });
+      }
+    } else if (double.tryParse(value) != null) {  // If it's a numeric value
+      if (editingNum1) {
+        setState(() {
+          input += value;
+          if (num1 == null) {
+            num1 = double.parse(input);
+          } else {
+            num1 = double.parse(input);
+          }
+        });
+      } else {
+        setState(() {
+          input += value;
+          if (num2 == null) {
+            num2 = double.parse(value);
+            if (kDebugMode) {
+              print('$num2 and $input');
+            }
+          } else {
+            int? num2int = num2?.toInt();
+            String temp = '$num2int.$value';
+            num2 = double.parse(temp);
+            if (kDebugMode) {
+              print('$num2 and $input');
+            }
+          }
         });
       }
     } else if (value == '+' || value == '-' || value == '×' || value == '÷') {  // If it's an operator
-      setState(() {
-        operator = value;
-        input = '$num1 $operator';
-      });
-    } else if(value == 'C') {
+      if (num1 != null) {
+        setState(() {
+          operator = value;
+          input += ' $operator ';
+          editingNum1 = false;
+        });
+      }
+    } else if (value == 'C') {
       setState(() {
         input = '';
         result = 0;
-        num1 = 0;
-        num2 = 0;
+        num1 = null;
+        num2 = null;
         operator = null;
+        editingNum1 = true;
       });
     }
-    print("Pressed: $value");
+    if (kDebugMode) {
+      print("Pressed: $value");
+    }
+  }
+
+  void calculate(){
+    if(num1 != null && num2 != null && operator!=null){
+      switch (operator) {
+        case '+':
+          result = num1! + num2!;
+          break;
+        case '-':
+          result = num1! - num2!;
+          break;
+        case '×':
+          result = num1! * num2!;
+          break;
+        case '÷':
+          result = num1! / num2!;
+          break;
+        default:
+          input = 'Error';
+          break;
+      }
+    }
+    setState(() {
+      result = double.parse(result.toStringAsFixed(9));
+    });
   }
 
   @override
@@ -170,24 +225,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           GestureDetector(
-            onTap: (){
-              if(operator == '+'){
-                setState(() {
-                  result = num1! + num2!;
-                });
-              } else if(operator == '-'){
-                setState(() {
-                  result = num1! - num2!;
-                });
-              } else if(operator == '×'){
-                setState(() {
-                  result = num1! * num2!;
-                });
-              } else if(operator == '÷'){
-                setState(() {
-                  result = num1! / num2!;
-                });
-              }
+            onTap: () {
+              calculate();
             },
             child: Container(
               width: double.infinity,
